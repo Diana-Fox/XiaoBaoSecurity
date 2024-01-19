@@ -7,7 +7,7 @@ import (
 
 func main() {
 	server := gin.Default()
-	handle := ioc.InitUserHandle()
+	handle := ioc.InitUserHandle("我的密钥，以后可以读配置文件")
 	handle.Register(server)
 	err := server.Run(":18080")
 	if err != nil {
