@@ -8,25 +8,27 @@ import (
 
 type Role struct {
 	ParentId int64  //父角色，一次性选中底下所有
-	Id       int64  `gorm:"primaryKey,autoIncrement"`
-	Name     string //角色名称
-	Ctime    int64
-	Utime    int64
+	Id       int64  `json:"id" gorm:"primaryKey,autoIncrement"`
+	Name     string `json:"name"` //角色名称
+	Ctime    int64  `json:"ctime"`
+	Utime    int64  `json:"utime"`
 }
 type roleDao struct {
 	db *gorm.DB
-}
-
-func (r *roleDao) FindByIds(ctx context.Context, ids []int64) ([]Role, error) {
-	var rs []Role
-	err := r.db.WithContext(ctx).Find(&rs).Error
-	return rs, err
 }
 
 func NewRoleDao(db *gorm.DB) RoleDao {
 	return &roleDao{
 		db: db,
 	}
+}
+func (r *roleDao) table() string {
+	return "roles"
+}
+func (r *roleDao) FindByIds(ctx context.Context, ids []int64) ([]Role, error) {
+	var rs []Role
+	err := r.db.WithContext(ctx).Find(&rs).Error
+	return rs, err
 }
 func (r *roleDao) Insert(ctx context.Context, role Role) error {
 	now := time.Now().UnixMilli()

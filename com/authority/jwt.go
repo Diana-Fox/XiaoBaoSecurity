@@ -38,7 +38,6 @@ func (j *JWTAuthority) SetAuthority(fn func(ctx *gin.Context) (domian.AuthorityU
 
 func (j *JWTAuthority) CheckStaticAuthority(fn func(ctx *gin.Context)) gin.HandlerFunc {
 	return func(context *gin.Context) {
-
 		info, err := j.getInfo(context)
 		if err != nil {
 			//todo 错误了，直接结束,可以，返回值不是重点，所以暂时这样就行了

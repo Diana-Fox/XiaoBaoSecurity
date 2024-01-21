@@ -10,6 +10,7 @@ import (
 func main() {
 	server := gin.Default()
 	jwtUtils := utils.NewJWTUtils("我的密钥")
+	//注意顺序，解析信息的middleware要在前面
 	server.Use(authority_info.NewJWTAuthorityInfoMiddleware(jwtUtils).Build())
 	handle := ioc.InitUserHandle(jwtUtils)
 	handle.Register(server)
