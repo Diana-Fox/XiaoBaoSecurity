@@ -23,6 +23,6 @@ func NewRoleResourceDao(db *gorm.DB) RoleResourceDao {
 // 通过角色查所有权限
 func (r roleResourceDao) FindResourceByRoles(ctx context.Context, rIds []int64) ([]int64, error) {
 	var rr []int64
-	err := r.db.WithContext(ctx).Select([]string{"RSId"}).Where("RId in (?)", rIds).Find(&rr).Error
+	err := r.db.WithContext(ctx).Table("role_resources").Select([]string{"RSId"}).Where("RId in (?)", rIds).Find(&rr).Error
 	return rr, err
 }

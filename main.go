@@ -2,12 +2,16 @@ package main
 
 import (
 	"XiaoBaoSecurity/ioc"
+	"XiaoBaoSecurity/middleware/authority_info"
+	"XiaoBaoSecurity/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	server := gin.Default()
-	handle := ioc.InitUserHandle("我的密钥，以后可以读配置文件")
+	jwtUtils := utils.NewJWTUtils("我的密钥")
+	server.Use(authority_info.NewJWTAuthorityInfoMiddleware(jwtUtils).Build())
+	handle := ioc.InitUserHandle(jwtUtils)
 	handle.Register(server)
 	err := server.Run(":18080")
 	if err != nil {

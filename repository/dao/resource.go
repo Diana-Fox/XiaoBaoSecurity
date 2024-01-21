@@ -43,6 +43,6 @@ func (r *resourceDao) FindAll(ctx context.Context) (error, Resource) {
 
 func (r *resourceDao) FindByIds(ctx context.Context, ids []int64) (error, []Resource) {
 	var rs []Resource
-	err := r.db.WithContext(ctx).Select([]string{"Url"}).Where("id in (?)", ids).Find(&rs).Error
+	err := r.db.WithContext(ctx).Table("resources").Where("id in (?)", ids).Find(&rs).Error
 	return err, rs
 }

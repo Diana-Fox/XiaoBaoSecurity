@@ -23,6 +23,6 @@ func NewUserRoleDao(db *gorm.DB) UserRoleDao {
 
 func (u *userRoleDao) FindRIdsByUId(ctx context.Context, uId int64) ([]int64, error) {
 	var ur []int64
-	err := u.db.WithContext(ctx).Select([]string{"RId"}).Where("Uid=?", uId).Find(&ur).Error
+	err := u.db.WithContext(ctx).Table("user_roles").Select([]string{"RId"}).Where("UId=?", uId).Find(&ur).Error
 	return ur, err
 }

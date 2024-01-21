@@ -10,7 +10,7 @@ import (
 )
 
 // InitUserHandle 构造老复杂了
-func InitUserHandle(secretKey string) web.UserHandler {
+func InitUserHandle(jwtUtils utils.JWTUtils) web.UserHandler {
 	db := InitDB()
 	userDao := dao.NewUserDao(db)
 	userRoleDao := dao.NewUserRoleDao(db)
@@ -19,7 +19,6 @@ func InitUserHandle(secretKey string) web.UserHandler {
 	userRepository := repository.
 		NewDefaultUserRepository(userDao, userRoleDao, roleResourceDao, resourceDao)
 	userService := service.NewDefaultUserService(userRepository)
-	jwtUtils := utils.NewJWTUtils(secretKey)
 	authorityHandler := authority.NewAuthority(jwtUtils)
 	handler := web.NewUserHandler(userService, authorityHandler)
 	return handler

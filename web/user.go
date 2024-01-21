@@ -25,6 +25,8 @@ func (d *DefaultUserHandler) Register(server *gin.Engine) {
 	s := server.Group("/users")
 	s.POST("/signup", d.SignUp)
 	s.POST("/login", d.aa.SetAuthority(d.Login))
+	s.GET("/ping", d.aa.CheckStaticAuthority(d.Ping))
+	s.GET("/ping/:id", d.aa.CheckDynamicsAuthority(d.PingId))
 }
 func (d *DefaultUserHandler) SignUp(ctx *gin.Context) {
 	//注册
@@ -64,4 +66,11 @@ func (d *DefaultUserHandler) Login(ctx *gin.Context) (domian.AuthorityUserInfo, 
 		return domian.AuthorityUserInfo{}, errors.New("参数解析失败")
 	}
 	return d.us.LoginByEmail(ctx, req.Email, req.Password)
+}
+
+func (d *DefaultUserHandler) Ping(ctx *gin.Context) {
+	ctx.String(200, "pang")
+}
+func (d *DefaultUserHandler) PingId(ctx *gin.Context) {
+	ctx.String(200, "pang-带资源的路由")
 }

@@ -23,20 +23,22 @@ func (j *JWTAuthority) SetAuthority(fn func(ctx *gin.Context) (domian.AuthorityU
 	return func(context *gin.Context) {
 		info, err := fn(context)
 		if err != nil {
-			//todo 登录失败，回头写点日志
+			context.String(401, err.Error())
 			return
 		}
 		//去生成jwt并存到请求头上
 		err = j.jwt.GenerateJWT(context, info)
 		if err != nil {
-			//todo 登录失败，回头写点日志
+			context.String(403, "权限设置异常")
 			return
 		}
+		context.String(200, "登录成功")
 	}
 }
 
 func (j *JWTAuthority) CheckStaticAuthority(fn func(ctx *gin.Context)) gin.HandlerFunc {
 	return func(context *gin.Context) {
+
 		info, err := j.getInfo(context)
 		if err != nil {
 			//todo 错误了，直接结束,可以，返回值不是重点，所以暂时这样就行了

@@ -31,7 +31,7 @@ func (j jwtUtils) GenerateJWT(ctx *gin.Context, userInfo domian.AuthorityUserInf
 		},
 		UserInfo: userInfo,
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES512, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedString, err := token.SignedString([]byte(j.secretKey))
 	if err != nil {
 		return err
@@ -46,10 +46,7 @@ func (j jwtUtils) AnalysisJWT(ctx *gin.Context, token string) (domian.AuthorityU
 	parseClaims, err := jwt.ParseWithClaims(token, clamis, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.secretKey), nil
 	})
-	if err != nil {
-		return domian.AuthorityUserInfo{}, err
-	}
-	if err != nil || parseClaims.Valid {
+	if err != nil || !parseClaims.Valid {
 		//这里细致化的话，可以考虑定义异常，让上层获取
 		return domian.AuthorityUserInfo{}, errors.New("权限验证失败")
 	}

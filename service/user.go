@@ -36,7 +36,7 @@ func (d *DefaultUserService) LoginByEmail(ctx context.Context, email string, pas
 	}
 	//去解密对比密码
 	encrypted, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	err = bcrypt.CompareHashAndPassword(encrypted, []byte(user.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(encrypted), []byte(password))
 	if err != nil {
 		//没通过呗,debug或者info日志
 		return domian.AuthorityUserInfo{}, ErrInvalidUserOrPassword
@@ -44,7 +44,7 @@ func (d *DefaultUserService) LoginByEmail(ctx context.Context, email string, pas
 	//通过比对，登录成功，去查权限信息
 	reslist, err := d.ur.FindUserAuthority(ctx, user.Id)
 	if err != nil {
-		return domian.AuthorityUserInfo{}, err
+		return domian.AuthorityUserInfo{}, errors.New("资源信息无法获取")
 	}
 	//都查到了，并且处理到统一格式了，没什么事情
 	return d.buildAuthorityUserInfo(user, reslist), nil
