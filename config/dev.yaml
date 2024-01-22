@@ -1,0 +1,5 @@
+#key不能有.
+mysql:
+  dsn: "root:root@tcp(localhost:13306)/rbac"
+ab:
+  abcd
