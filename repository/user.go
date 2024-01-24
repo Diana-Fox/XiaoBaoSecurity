@@ -4,6 +4,7 @@ import (
 	"XiaoBaoSecurity/repository/dao"
 	"context"
 	"database/sql"
+	"go.uber.org/zap"
 )
 
 type DefaultUserRepository struct {
@@ -21,6 +22,7 @@ func (d *DefaultUserRepository) FindUserAuthority(ctx context.Context, uid int64
 	//拿到rIds后
 	resIds, err := d.rrd.FindResourceByRoles(ctx, rIds)
 	if err != nil {
+		zap.L().Error(err.Error())
 		return nil, err
 	}
 	err, resList := d.rsd.FindByIds(ctx, resIds)
