@@ -53,20 +53,9 @@ func (d *DefaultUserService) buildAuthorityUserInfo(user dao.User, reslist []dao
 	var info domian.AuthorityUserInfo
 	info.UId = user.Id
 	uMap := make(map[string]byte)
-	uList := make([]domian.UrlNode, 0)
 	for i := 0; i < len(reslist); i++ {
-		//是动态路由
-		if reslist[i].IsDynamicRouting == 1 {
-			//分类到动态路由的权限里面
-			uList = append(uList, domian.UrlNode{
-				Url:   reslist[i].DynamicUrl,
-				Level: reslist[i].Level,
-			})
-		} else {
-			uMap[reslist[i].Url] = 1 //基础路由
-		}
+		uMap[reslist[i].Url] = 1 //基础路由
 	}
 	info.UrlMap = uMap
-	info.UrlList = uList
 	return info
 }

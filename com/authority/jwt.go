@@ -5,9 +5,7 @@ import (
 	"XiaoBaoSecurity/utils"
 	"errors"
 	"fmt"
-	regexp "github.com/dlclark/regexp2"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 type JWTAuthority struct {
@@ -36,7 +34,7 @@ func (j *JWTAuthority) SetAuthority(fn func(ctx *gin.Context) (domian.AuthorityU
 	}
 }
 
-func (j *JWTAuthority) CheckStaticAuthority(fn func(ctx *gin.Context)) gin.HandlerFunc {
+func (j *JWTAuthority) CheckAuthority(fn func(ctx *gin.Context)) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		info, err := j.getInfo(context)
 		if err != nil {
@@ -44,46 +42,14 @@ func (j *JWTAuthority) CheckStaticAuthority(fn func(ctx *gin.Context)) gin.Handl
 			context.String(401, err.Error())
 			return
 		}
-		path := context.Request.URL.Path
-		urlMap := info.UrlMap //静态路由，所以只用map
+		path := context.FullPath()
+		urlMap := info.UrlMap
 		_, ok := urlMap[path]
 		if ok {
 			//说明在map中命中了,可以执行了
 			fmt.Printf("在map")
 			fn(context)
 			return
-		}
-		context.String(401, errors.New("没有当前路径权限").Error())
-	}
-}
-
-func (j *JWTAuthority) CheckDynamicsAuthority(fn func(ctx *gin.Context)) gin.HandlerFunc {
-	return func(context *gin.Context) {
-		info, err := j.getInfo(context)
-		if err != nil {
-			//todo 错误了，直接结束,返回值不是重点，所以暂时这样就行了
-			context.String(401, err.Error())
-			return
-		}
-		path := context.Request.URL.Path
-		pathLevel := len(strings.Split(path, `/`))
-		urlList := info.UrlList //动态路由，所以去遍历然后匹配正则
-		for _, node := range urlList {
-			if node.Level == pathLevel {
-				//一样长度，所以值得正则一下
-				ok, err := regexp.MustCompile(node.Url, regexp.None).MatchString(path)
-				if err != nil {
-					//todo 这里后面直接拒绝请求，理论上不会报错
-					fmt.Printf("正则报错")
-					context.String(401, "信息异常")
-					return
-				}
-				if ok {
-					//要是匹配上了，直接放行
-					fn(context)
-					return
-				}
-			}
 		}
 		context.String(401, errors.New("没有当前路径权限").Error())
 	}

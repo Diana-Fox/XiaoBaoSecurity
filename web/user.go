@@ -25,8 +25,8 @@ func (d *DefaultUserHandler) Register(server *gin.Engine) {
 	s := server.Group("/users")
 	s.POST("/signup", d.SignUp)
 	s.POST("/login", d.aa.SetAuthority(d.Login))
-	s.GET("/ping", d.aa.CheckStaticAuthority(d.Ping))
-	s.GET("/ping/:id", d.aa.CheckDynamicsAuthority(d.PingId))
+	s.GET("/ping", d.aa.CheckAuthority(d.Ping))
+	s.GET("/ping/:id", d.aa.CheckAuthority(d.PingId))
 }
 func (d *DefaultUserHandler) SignUp(ctx *gin.Context) {
 	//注册
