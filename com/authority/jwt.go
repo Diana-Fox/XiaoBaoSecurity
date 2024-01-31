@@ -9,10 +9,10 @@ import (
 )
 
 type JWTAuthority struct {
-	jwt utils.JWTUtils
+	jwt utils.JWTUtils[domian.AuthorityUserInfo]
 }
 
-func NewAuthority(jwt utils.JWTUtils) AuthorityHandler {
+func NewAuthority(jwt utils.JWTUtils[domian.AuthorityUserInfo]) AuthorityHandler {
 	return &JWTAuthority{jwt: jwt}
 }
 
