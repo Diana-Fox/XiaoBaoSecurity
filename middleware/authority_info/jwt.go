@@ -1,17 +1,18 @@
 package authority_info
 
 import (
+	"XiaoBaoSecurity/domian"
 	"XiaoBaoSecurity/utils"
 	"github.com/gin-gonic/gin"
 )
 
 // 从jwt中解析登录的信息
 type JWTAuthorityInfoMiddleware struct {
-	utils utils.JWTUtils
+	utils utils.JWTUtils[domian.AuthorityUserInfo]
 }
 
 // 初始化
-func NewJWTAuthorityInfoMiddleware(utils utils.JWTUtils) AuthorityInfoMiddleware {
+func NewJWTAuthorityInfoMiddleware(utils utils.JWTUtils[domian.AuthorityUserInfo]) AuthorityInfoMiddleware {
 	return &JWTAuthorityInfoMiddleware{
 		utils: utils,
 	}
