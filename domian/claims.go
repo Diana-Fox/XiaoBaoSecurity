@@ -2,7 +2,7 @@ package domian
 
 import "github.com/golang-jwt/jwt/v5"
 
-type UserClaims struct {
+type UserClaims[T any] struct {
 	jwt.RegisteredClaims
-	UserInfo AuthorityUserInfo //存权限信息
+	UserInfo T //存权限信息
 }

@@ -8,24 +8,24 @@ import (
 	"time"
 )
 
-// jwt生成和解析工具
-type JWTUtils interface {
-	GenerateJWT(ctx *gin.Context, userInfo domian.AuthorityUserInfo) error        //生成jwt
-	AnalysisJWT(ctx *gin.Context, token string) (domian.AuthorityUserInfo, error) //解析jwt
+// JWTUtils 改成泛型
+type JWTUtils[T any] interface {
+	GenerateJWT(ctx *gin.Context, userInfo T) error        //生成jwt
+	AnalysisJWT(ctx *gin.Context, token string) (T, error) //解析jwt
 }
+
 type jwtUtils struct {
 	secretKey string
 }
 
 // 密钥一般不会变，所有固定一下
-func NewJWTUtils(secretKey string) JWTUtils {
+func NewJWTUtils(secretKey string) JWTUtils[domian.AuthorityUserInfo] {
 	return &jwtUtils{
 		secretKey: secretKey,
 	}
 }
-
 func (j jwtUtils) GenerateJWT(ctx *gin.Context, userInfo domian.AuthorityUserInfo) error {
-	var claims = domian.UserClaims{
+	var claims = domian.UserClaims[domian.AuthorityUserInfo]{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute)), //
 		},
@@ -38,11 +38,10 @@ func (j jwtUtils) GenerateJWT(ctx *gin.Context, userInfo domian.AuthorityUserInf
 	}
 	ctx.Header("x-jwt-token", signedString)
 	return nil
-
 }
 
 func (j jwtUtils) AnalysisJWT(ctx *gin.Context, token string) (domian.AuthorityUserInfo, error) {
-	clamis := &domian.UserClaims{}
+	clamis := &domian.UserClaims[domian.AuthorityUserInfo]{}
 	parseClaims, err := jwt.ParseWithClaims(token, clamis, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.secretKey), nil
 	})
